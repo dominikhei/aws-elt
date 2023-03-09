@@ -1,0 +1,136 @@
+version: 2
+
+models:
+  - name: dim_songs
+    description: The dimensional table for the songs, which is materialized incremental
+
+    columns:
+      - name: song_id
+        description: This is a unique identifier for the songs
+        tests:
+          - unique
+          - not_null
+      - name: song_name
+        description: The name of the songs 
+      - name: artist_id
+        description: The unique id of the songs artist
+        tests:
+          - relationships:
+              to: ref('dim_artists')
+              field: artist_id
+      - name: album_id
+        description: The unique id of the songs album
+        tests:
+          - relationships:
+              to: ref('dim_albums')
+              field: album_id 
+      - name: popularity
+        description: Songs popularity in between 0 and 100 (both included)
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0  
+              max_value: 100 
+              strictly: false #makes it in between or equal to values
+      - name: song_duration_ms
+        description: The songs duration in milliseconds
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+      - name: explicit
+        description: Boolean column to check wheter the song is explicit or not
+        tests:
+          - accepted_values:
+              values: [true, false]
+      - name: number_on_album
+        description: The songs position on the album
+      
+  - name: dim_artists
+    columns:
+      - name: artist_id
+        description: Unique Id for the artists
+        tests:
+          - unique
+          - not_null 
+      - name: artist_name
+        description: Name of the artist
+
+  - name: dim_albums
+    columns:
+      - name: album_id
+        description: The albums unique identifier
+        tests:
+        - unique
+        - not_null
+        - relationships:
+            to: ref('dim_songs')
+            field: album_id  
+      - name: album_name
+        description: The albums or singles name
+      - name: artist_id
+        description: An albums artist identifier
+        tests:
+        - relationships:
+            to: ref('dim_artists')
+            field: artist_id
+      - name: album_release_date
+        description: The release date of the album in the format YYYY-MM-DD
+        tests: 
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+      - name: album_total_tracks
+        description: The amount of songs on an album
+        
+  - name: dim_dates
+    columns:
+      - name: date_id
+        description: A surrogate key for the date table
+        tests:
+          - unique 
+          - not_null 
+      - name: year 
+      - name: month
+      - name: day 
+
+  - name: fact_charts
+    columns:
+      - name: song_id
+        description: The unique identifier for a song in the charts 
+        tests:
+          - unique 
+          - not_null 
+          - relationships:
+              to: ref('dim_songs')
+              field: song_id 
+      - name: artist_id
+        description: The artist id for each song
+        tests:
+          - relationships:
+              to: ref('dim_albums')
+              field: song_id
+      - name: album_id
+        description: The unique album_id for each song. 
+        tests:
+          - relationships:
+              to: ref('dim_albums')
+              field: album_id
+      - name: first_loaded
+        description: yyyy-mm-dd date for the time the song has entered the charts for this time (songs might enter twice, than a new start_date is picked)
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+      - name: last_loaded
+        description: The last time the song was in the charts in yyyy-mm-dd
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+
+
+
+
+
+
+
+
+      
+
+

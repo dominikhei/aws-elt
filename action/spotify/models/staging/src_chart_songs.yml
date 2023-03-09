@@ -1,0 +1,85 @@
+version: 2
+
+sources:
+  - name: stage_songs
+    database: spotify_project
+    schema: stage
+    description: Source tables for the songs currently in the charts and their attributes. Will be loaded without preprocessing
+    tables:
+      - name: stg_chart_songs
+        tests:
+          - dbt_expectations.expect_table_row_count_to_equal_other_table:
+              compare_model: source("stage_songs", "stg_song_attributes")
+        freshness:
+          warn_after:
+            count: 1
+            period: day 
+        columns:
+          - name: song_id
+            description: Unique identifier of songs in charts 
+            tests:
+              - unique
+              - not_null 
+          - name: explicit
+            tests:
+              - accepted_values:
+                  values: [true, false]
+                  quote: false
+                  
+      - name: stg_song_attributes
+        tests:
+          - dbt_expectations.expect_table_row_count_to_equal_other_table:
+              compare_model: source("stage_songs", "stg_chart_songs")
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+        columns:
+          - name: song_id
+            description: Unique identifier of songs in charts 
+            tests:
+              - unique
+              - not_null 
+          - name: danceability
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  max_value: 1 
+          - name: energy
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  max_value: 1 
+          - name: loudness
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  max_value: -0.0000001 
+          - name: speechiness
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  max_value: 1 
+          - name: acousticness
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  strictly: false
+          - name: instrumentalness
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  strictly: false
+          - name: liveness
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  strictly: false
+          - name: valence
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0  
+                  strictly: false
+          - name: tempo
+          - name: duration_ms
+
+              

@@ -1,0 +1,68 @@
+checks for stg_song_attributes:
+
+#check the key column:
+
+  - row_count = 50
+  - row_count same as stg_chart_songs
+  - duplicate_count(song_id) = 0
+  - values in (song_id) must exist in stg_chart_songs (song_id)
+
+#check the schema:
+
+  - schema:
+      fail:
+        when required column missing: [song_id, danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms]
+        when wrong column type:
+          song_id: varchar
+          danceability:  double precision
+          energy: double precision
+          loudness: double precision
+          speechiness: double precision
+          acousticness: double precision
+          instrumentalness: double precision
+          liveness: double precision
+          valence: double precision
+          tempo: double precision
+          duration_ms: bigint
+
+#check the column values:
+
+  - max(loudness) < 0
+  - max(danceability) <= 1
+  - min(danceability) >= 0
+  - max(energy) <= 1
+  - min(energy) >= 0
+  - max(speechiness) <= 1
+  - min(speechiness) >= 0
+  - max(acousticness) <= 1
+  - min(acousticness) >= 0
+  - max(instrumentalness) <= 1
+  - min(instrumentalness) >= 0
+  - max(liveness) <= 1
+  - min(liveness) >= 0
+  - max(valence) <= 1
+  - min(valence) >= 0
+
+checks for stg_chart_songs:
+
+  - row_count = 50
+  - row_count same as stg_song_attributes
+  - duplicate_count(song_id) = 0
+  - values in (song_id) must exist in stg_song_attributes (song_id)
+
+  - schema:
+      fail:
+        when required column missing: [song_id, song_name, artist_name, artist_id, number_on_album, song_duration_ms, popularity, explicit, album_id, album_name, album_release_date, album_total_tracks]
+        when wrong column type:
+          song_id: varchar
+          song_name: varchar
+          artist_name: varchar
+          artist_id: varchar
+          number_on_album: smallint
+          song_duration_ms: bigint
+          popularity: smallint
+          explicit: boolean
+          album_id: varchar
+          album_name: varchar
+          album_release_date: date
+          album_total_tracks: smallint

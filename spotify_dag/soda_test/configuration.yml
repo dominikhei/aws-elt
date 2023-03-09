@@ -1,0 +1,14 @@
+data_source redshift_spotify_charts:
+  type: redshift
+  connection:
+    host: ${REDSHIFT_HOST}
+    username: awsuser
+    password: ${REDSHIFT_PW}
+    database: spotify_project
+    access_key_id: ${ACCESS_KEY}
+    secret_access_key: ${SECRET_ACCESS_KEY}
+    role_arn: ${REDSHIFT_ARN}
+    region: eu-west-1
+  schema: stage
+
+

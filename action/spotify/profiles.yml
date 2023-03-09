@@ -1,0 +1,12 @@
+spotify:  
+  outputs:
+    dev:
+      type: redshift
+      threads: 1
+      host:  "{{ env_var('REDSHIFT_HOST') }}"
+      port: 5439
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      pass: "{{ env_var('REDSHIFT_PW') }}"
+      dbname: spotify_project
+      schema: spotify_charts
+  target: dev

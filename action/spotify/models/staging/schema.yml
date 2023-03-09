@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_ephemeral_attributes
+    description: The ephemeral table for the attribute stage table, where some cleaning has been done 
+    
+    columns:
+      - name: song_id
+        description: This is a unique identifier for the songs
+      - name: danceability 
+        description: How danceable a song is from 0 to 1 
+      - name: energy
+        description: How energetic a song is from 0 to 1
+      - name: loudness 
+        description: A negative value indicating the loudness of a song. The smaller the louder 
+      - name: speechiness 
+      - name: instrumentalness
+      - name: liveness
+      - name: valence
+      - name: tempo
+      - name: duration_ms 
+
+  - name: songs_last_loaded
+    description: each songs id and when it was the last time in the stg_chart_songs table
+
+    columns:
+      - name: song_id
+        tests:
+          - unique
+          - not_null
+      - name: last_loaded
+        description: When a song has been in the stg_chart_songs table the last time
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$"
+
