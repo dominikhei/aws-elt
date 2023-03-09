@@ -1,10 +1,10 @@
 ## Structure 
 - [Introduction](#introduction)
-- [ELT process walkthrough](#process:)
-- [Handling Idempotency](#handling-idempotency:)
+- [ELT process walkthrough](#elt-process)
+- [Handling Idempotency](#handling-idempotency)
 - [Architecture on AWS](#architecture)
-- [Extraction code walkthrough](#extraction-code-walkthrough:)
-- [How to set the project up locally](#how-to-set-the-project-up-locally:)
+- [Extraction code walkthrough](#extraction-code-walkthrough)
+- [How to set the project up locally](#how-to-set-the-project-up-locally)
 - [Future outlook](#future-outlook)
 
 
@@ -17,7 +17,7 @@ I have used an __ELT process__ for this pipeline, __here is why__:
 ELT means to transform the data after it has been loaded into its destination. 
 I am doing this, because modern cloud infrastructure has become way cheaper, which makes it less of a concern to store large amounts of untransformed raw data. Furthermore modern Data Warehouses have a lot of processing power, eliminating the need for external frameworks to transform the data. The result is a highly scalable architecture. 
 
-## ELT process:
+## ELT process
 
 __Note:__ This is the process described from a non infrastructural perspective. How all of these parts have been set up / deployed can be found [here](#architecture)
 
@@ -55,7 +55,7 @@ This is the corresponding Airflow dag, which can be found [here](/spotify_dag/ch
 
 The truncate_stage_attributes2 and truncate_stage_songs2 tasks are also being executed if any of the upstream tasks fail, which means that these tables will always be empty after a run, no matter its state. By that I am ensuring idempotency. 
 
-## Handling Idempotency:
+## Handling Idempotency
 
 One of the largest concerns when building a data pipeline is wheter it is idempotent. This means that the pipeline can be executed multiple times, without changing the data in our sink. Or for anyone with a mathematical background: f(f(x)) = f(x). This pipeline is idempotent, let me show you why: 
 
@@ -133,7 +133,7 @@ As explained, Redshift and The EC2 instance are in its own VPC. Through the asso
 This is the VPC setup visualized:
 ![](/.images/vpc.png)
 
-## Extraction code walkthrough:
+## Extraction code walkthrough
 
 Here I am walking you through the script which extracts the song_data from Spotifys Api endpoints and loads them in S3. The actual script can be found [here](/spotify_dag/extract_data.py)
 
@@ -160,7 +160,7 @@ Last, the data needs to be uploaded to S3 as a Csv file using boto3. This functi
 
 
 
-## How to set the project up locally:
+## How to set the project up locally
 
 To set the project up yourself, you need:
 - The AWS Cli 
