@@ -15,7 +15,7 @@ To be able to analyse this, I have built an ELT Pipeline on AWS. The AWS Infrast
 
 I have used an __ELT process__ for this pipeline, __here is why__:
 ELT means to transform the data after it has been loaded into its destination. 
-I am doing this, because modern cloud infrastructure has become way cheaper, which makes it less of a concern to store large amounts of untransformed raw data. Furthermore modern Data Warehouses have a lot of processing power, eliminating the need for external frameworks to transform the data. The result is a highly scalable architecture. 
+This means, that the raw data is stored before transforming it, thus being more flexible with changing the transformational logic. ELT has been enabled by modern cloud infrastructure becoming way cheaper, which makes it less of a concern to store large amounts of untransformed raw data. Furthermore modern Data Warehouses have a lot of processing power, eliminating the need for external frameworks to transform the data. The result is a highly scalable architecture. 
 
 ## ELT process
 
@@ -125,6 +125,7 @@ The structure of the projects S3 bucket looks like the following:
 __Redshift:__
 
 Redshift is AWS own Data Warehouse, based on Postgres. The Redshift database has two schemas: stage and mart. This is to seperate the actual data and the staging data and thus helps to organize everything. Redshift is set to not publicly accessible. 
+I have used Redshift for the learning experience. If this project would be setup in a real world scenario, a Redshift instance just for it would be completety overkill and a simple RDS instance would be sufficient. 
 
 __VPC setup__
 
